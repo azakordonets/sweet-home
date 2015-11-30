@@ -1,0 +1,18 @@
+{
+  "name": "sweet-home",
+  "version": "1.0.0",
+  "description": "Parses websites for a home!",
+  "main": "scripts/index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Borys Ponomarenko",
+  "license": "MIT",
+  "dependencies": {
+    "bluebird": "^3.0.5",
+    "htmlparser2": "^3.8.3",
+    "jsonfile": "^2.2.3",
+    "lodash": "^3.10.1",
+    "request-promise": "^1.0.2"
+  }
+}

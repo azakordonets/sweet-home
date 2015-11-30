@@ -1,0 +1,11 @@
+{
+	"interval": 1,
+	"recordsLimit": 100,
+	"parsers": [
+		{
+			"name": "Pararius.nl",
+			"key": "pararius",
+			"url": "http://pararius.com"
+		}
+	]
+}
