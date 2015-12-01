@@ -41,7 +41,7 @@ function initParameters (config) {
 
 	if(_.isArray(config.parsers)) {
 		_.forEach(config.parsers, function(p) {
-			parsers.push(new Parser(p, config.recordsLimit));
+			parsers.push(new Parser(p, config.recordsLimit, config.pagesLimit));
 		});
 	}
 }
@@ -67,7 +67,7 @@ function loop() {
 			console.log(colors.red(err));
 		})
 		.finally(function() {
-			setTimeout(loop, interval);
+			// setTimeout(loop, interval);
 		});
 };
 

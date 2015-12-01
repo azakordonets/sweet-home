@@ -1,11 +1,20 @@
 {
 	"interval": 1,
 	"recordsLimit": 100,
+	"pagesLimit": 10,
 	"parsers": [
 		{
 			"name": "Pararius.nl",
-			"url": "http://www.pararius.com/apartments/amsterdam/insert-date-descending",
-			"pageParam": "/page-{pageParam}"
+			"url": "http://www.pararius.com",
+			"searchUrl": "/apartments/amsterdam/insert-date-descending",
+			"pageParam": "/page-{pageParam}",
+			"listNode": {
+				"id": "resultset"
+			},
+			"listItemNode": {
+				"tagName": "li",
+				"classContains": "row-"
+			}
 		}
 	]
 }
