@@ -4,8 +4,8 @@
 	"parsers": [
 		{
 			"name": "Pararius.nl",
-			"key": "pararius",
-			"url": "http://pararius.com"
+			"url": "http://www.pararius.com/apartments/amsterdam/insert-date-descending",
+			"pageParam": "/page-{pageParam}"
 		}
 	]
 }

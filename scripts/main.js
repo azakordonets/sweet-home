@@ -1,5 +1,9 @@
+'use strict';
+
 var jsonfile = require('jsonfile');
 var Promise = require('bluebird');
+var Parser = require('./parser');
+var colors = require('colors');
 var _ = require('lodash');
 
 var CONF_PATH = './conf/config.json';
@@ -14,7 +18,7 @@ function start() {
 		.then(initParameters)
 		.then(tryRun)
 		.catch(function(err) {
-			console.error(err);
+			console.log(colors.red(err));
 		});
 }
 
@@ -25,7 +29,7 @@ function tryRun() {
 	if(parsers.length > 0) {
 		loop();
 	} else {
-		console.log('No specified parsers!');
+		console.log(colors.blue('No specified parsers!'));
 	}
 }
 
@@ -33,14 +37,11 @@ function tryRun() {
  * Parse configuration file and set runtime parameters
  */
 function initParameters (config) {
-	interval = (_.isNumber(config.interval) ? config.interval : 30) * 60000; // interval is set in minutes
+	interval = (_.isNumber(config.interval) ? config.interval : 1) * 60000; // interval is set in minutes
 
 	if(_.isArray(config.parsers)) {
 		_.forEach(config.parsers, function(p) {
-			var ParserClass = require('./parsers/' + p.key + '.js');
-			if(_.isFunction(ParserClass)) {
-				parsers.push(new ParserClass(p));
-			}
+			parsers.push(new Parser(p, config.recordsLimit));
 		});
 	}
 }
@@ -60,10 +61,10 @@ function getConfig() {
 function loop() {
 	Promise
 		.all(_.map(parsers, function(parser) {
-			return parser.work();
+			return parser.getCandidates();
 		}))
 		.catch(function(err) {
-			console.error(err);
+			console.log(colors.red(err));
 		})
 		.finally(function() {
 			setTimeout(loop, interval);
