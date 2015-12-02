@@ -2,7 +2,6 @@
 
 var jsonfile = require('jsonfile');
 var Promise = require('bluebird');
-var Parser = require('./parser');
 var colors = require('colors');
 var _ = require('lodash');
 
@@ -29,7 +28,7 @@ function tryRun() {
 	if(parsers.length > 0) {
 		loop();
 	} else {
-		console.log(colors.blue('No specified parsers!'));
+		console.log('No specified parsers!'.blue);
 	}
 }
 
@@ -41,7 +40,12 @@ function initParameters (config) {
 
 	if(_.isArray(config.parsers)) {
 		_.forEach(config.parsers, function(p) {
-			parsers.push(new Parser(p, config.recordsLimit, config.pagesLimit));
+			var Parser = require('./parsers/' + p.key);
+
+			if(_.isFunction(Parser)) {
+				var options = _.assign({}, p, { recordsLimit: config.recordsLimit, pagesLimit: config.pagesLimit });
+				parsers.push(new Parser(options));
+			}
 		});
 	}
 }
@@ -61,7 +65,7 @@ function getConfig() {
 function loop() {
 	Promise
 		.all(_.map(parsers, function(parser) {
-			return parser.getCandidates();
+			return parser.doMagic();
 		}))
 		.catch(function(err) {
 			console.log(colors.red(err));
