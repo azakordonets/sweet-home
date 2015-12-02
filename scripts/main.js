@@ -3,11 +3,17 @@
 var jsonfile = require('jsonfile');
 var Promise = require('bluebird');
 var colors = require('colors');
+var fs = require('fs');
 var _ = require('lodash');
 
 var CONF_PATH = './conf/config.json';
+var STATE_PATH = '~/sweet-home/state.json';
 
 var interval, parsers = [];
+var state = {
+	"flats": [],
+	"flatId": {}
+};
 
 /*
  * Main entry point
@@ -55,14 +61,54 @@ function initParameters (config) {
  * Returns a Promise, which resolves to configuration file
  */
 function getConfig() {
-	var readFile = Promise.promisify(jsonfile.readFile);
-	return readFile(CONF_PATH);
+	return Promise.promisify(jsonfile.readFile)(CONF_PATH);
+}
+
+/*
+ * Loads json state file. If file doesn't exist - will create default state structure.
+ * Returns a Promise, which resolves to state object
+ */
+function getState() {
+	return Promise.promisify(jsonfile.readFile)(getStatePath())
+		.then(function(json){
+			return _.assign(state, json);
+		},
+		function(error) {
+			return Promise.resolve(state);
+		});
+}
+
+/*
+ * Calculates and returns state file path
+ */
+function getStatePath() {
+	return STATE_PATH;
+}
+
+function storeFlats(flats) {
+	if(_.isArray(flats) && flats.length > 0) {
+
+		// Create file, if it's not created
+		var path = getStatePath();
+		fs.exists(path, function(exist) {
+			if(!exist){
+				fs.closeSync(fs.openSync(path, 'w'));
+			}
+		});
+	}
 }
 
 /*
  * Main loop
  */
 function loop() {
+
+
+	// storeFlats([1]);
+
+	getState().then(function(r){ console.log(1, r)}, function(r) { console.log(2, r)});
+
+	return;
 	Promise
 		.all(_.map(parsers, function(parser) {
 			return parser.doMagic();
