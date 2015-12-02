@@ -2,7 +2,7 @@
 
 var jsonfile = require('jsonfile');
 var Promise = require('bluebird');
-var colors = require('colors');
+var bunyan = require('bunyan');
 var fs = require('fs');
 var _ = require('lodash');
 

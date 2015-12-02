@@ -14,7 +14,7 @@
   "license": "MIT",
   "dependencies": {
     "bluebird": "^3.0.5",
-    "colors": "^1.1.2",
+    "bunyan": "^1.5.1",
     "htmlparser2": "^3.8.3",
     "jsonfile": "^2.2.3",
     "lodash": "^3.10.1",
