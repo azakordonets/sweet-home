@@ -67,6 +67,9 @@ function loop() {
 		.all(_.map(parsers, function(parser) {
 			return parser.doMagic();
 		}))
+		.then(function(flats){
+			console.log(flats);
+		})
 		.catch(function(err) {
 			console.log(colors.red(err));
 		})
