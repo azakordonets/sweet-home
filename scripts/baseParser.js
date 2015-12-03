@@ -39,12 +39,21 @@ ParserClass.prototype.processPage = function(options) {
 		.then(this.getFlatNodes.bind(this))
 		.then(function(nodes) {
 
-			var flats = [];
-			_.forEach(nodes, function(node) {
+			var result = {
+				flats: [],
+				ids: {}
+			};
+			var lastId = '';
+
+			_.forEach(nodes, function(node, index) {
 				var obj = _this.getFlatObject(node);
 
 				if(_this.includeFlat(obj)) {
-					flats.push(obj);
+					result.flats.push(obj);
+				}
+
+				if(options.page == 0 && index == 0) {
+					lastId = result.ids[_this.conf.key] = obj.id;
 				}
 
 				options.foundLast = _this.processFlat(obj);
@@ -53,14 +62,19 @@ ParserClass.prototype.processPage = function(options) {
 			});
 
 			if(!options.foundLast && ++options.page < _this.conf.pagesLimit && options.processed < _this.conf.recordsLimit) {
-				return _this.processPage(options).then(function(pageFlats) {
-					return pageFlats.concat(flats);
+				return _this.processPage(options).then(function(innerResult) {
+					result.flats = result.flats.concat(innerResult.flats);
+					_.assign(result.ids, innerResult.ids);
+
+					return result;
 				});
 			} else {
 				_this.log.debug('Parser \'' + _this.conf.name + '\' finished.');
 				_this.log.debug('Flats processed: ' + options.processed + '. Pages processed: ' + options.page + '.');
 				
-				return Promise.resolve(flats);
+				_this.conf.lastId = lastId;
+
+				return Promise.resolve(result);
 			}
 		})
 		.catch(function(err) {
@@ -73,8 +87,7 @@ ParserClass.prototype.processPage = function(options) {
  *
  */
 ParserClass.prototype.processFlat = function(flat) {
-	// TODO
-	return false;
+	return flat.id == this.conf.lastId;
 };
 
 /*
@@ -141,7 +154,7 @@ ParserClass.prototype.getFlatNodes = function(dom) {
  * Should be implemented in child class
  */
 ParserClass.prototype.getFlatObject = function(node) {
-	throw new Error('Method \'getFlatObject\' not implemented in \'' + this.conf.name + '\' parser.');
+	return { date: Date.now() };
 };
 
 module.exports = ParserClass;

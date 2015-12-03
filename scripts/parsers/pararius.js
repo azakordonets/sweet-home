@@ -42,11 +42,12 @@ ParariusParser.prototype.getFlatObject = function(node) {
 		return str.indexOf("PR0") != -1;
 	});
 
-	return {
+	var baseObj = BaseClass.prototype.getFlatObject.call(this, node);
+	return _.assign({
 		id: id,
 		price: parseInt(utils.getText(priceNode).replace(/[^0-9]/gi, '')),
 		link: URL + link
-	}
+	}, baseObj);
 };
 
 module.exports = ParariusParser;

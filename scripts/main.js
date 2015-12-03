@@ -58,7 +58,8 @@ function initParameters (config) {
 					recordsLimit: config.recordsLimit,
 					pagesLimit: config.pagesLimit,
 					priceMin: Math.abs(config.priceMin),
-					priceMax: Math.abs(config.priceMax)
+					priceMax: Math.abs(config.priceMax),
+					lastId: state.flatId[p.key]
 				});
 				parsers.push(new Parser(options));
 
@@ -98,7 +99,7 @@ function loadState() {
 
 	return Promise.promisify(fse.readJson)(getStatePath())
 		.then(function(json){
-			_.merge(state, json);
+			_.assign(state, json);
 		},
 		function(error) {
 			log.warn('No state file or state data is invalid.');
@@ -116,11 +117,12 @@ function getStatePath() {
 /*
  * Saves found flats to state file
  */
-function storeFlats(flats) {
+function storeFlats(flats, ids) {
 	if(_.isArray(flats) && flats.length > 0) {
 		log.info('Saving ' + flats.length + ' found flats.');
 
 		state.flats = state.flats.concat(flats);
+		_.assign(state.flatId, ids);
 
 		var ensureFile = Promise.promisify(fse.ensureFile);
 		var writeJson = Promise.promisify(fse.writeJson);
@@ -148,8 +150,15 @@ function loop() {
 		.all(_.map(parsers, function(parser) {
 			return parser.doMagic();
 		}))
-		.then(function(flats) {
-			return storeFlats(Array.prototype.concat.apply([], flats));
+		.then(function(result) {
+			var flats = [];
+			var ids = {};
+
+			_.forEach(result, function(obj) {
+				_.assign(ids, obj.ids);
+				flats = flats.concat(obj.flats);
+			});
+			return storeFlats(flats, ids);
 		})
 		.catch(log.error.bind(log))
 		.finally(function() {

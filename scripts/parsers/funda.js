@@ -47,11 +47,12 @@ FundaParser.prototype.getFlatObject = function(node) {
 		return el.name == 'a' && _.startsWith(el.attribs.id, ID_PREFIX);
 	}, [node]), 'attribs.id');
 
-	return {
+	var baseObj = BaseClass.prototype.getFlatObject.call(this, node);
+	return _.assign({
 		id: idStr.replace(ID_PREFIX, ''),
 		price: parseInt(utils.getText(priceNode).replace(/[^0-9]/gi, '')),
 		link: URL + link
-	}
+	}, baseObj);
 };
 
 module.exports = FundaParser;
