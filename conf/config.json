@@ -1,5 +1,5 @@
 {
-	"interval": 10,
+	"interval": 5,
 	"recordsLimit": 200,
 	"pagesLimit": 10,
 	"priceMin": 800,

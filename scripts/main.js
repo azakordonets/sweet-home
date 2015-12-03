@@ -1,6 +1,7 @@
 'use strict';
 
 var log = require('./logger').getLogger('main');
+var HandlebarsIntl = require('handlebars-intl');
 var Handlebars = require('handlebars');
 var Promise = require('bluebird');
 var express = require('express');
@@ -186,7 +187,7 @@ function generateHtml() {
 
 	getTemplate()
 		.then(function(tmpl) {
-			return tmpl(state);
+			return tmpl(getHtmlData());
 		})
 		.then(function(page){
 			var writeFile = Promise.promisify(fs.writeFile);
@@ -195,10 +196,20 @@ function generateHtml() {
 }
 
 /*
+ * Returs flats array.
+ * Sorted by added date, descending
+ */
+function getHtmlData () {
+	return _.sortByOrder(state.flats, ['date', 'id'], ['desc', 'desc']);
+}
+
+/*
  * Loads and compiles Handlebars template
  */
 function getTemplate () {
 	if(!template) {
+		HandlebarsIntl.registerWith(Handlebars);
+
 		return Promise.promisify(fs.readFile)(TEMPLATE_PATH, { encoding: ENCODING })
 			.then(function(templateSource) {
 				template = Handlebars.compile(templateSource);

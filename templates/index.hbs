@@ -4,9 +4,42 @@
 	<meta charset="UTF-8">
 	<title>Home, sweet home</title>
 
+	<link rel="stylesheet" href="vendor/normalize-css/normalize.css">
 	<link rel="stylesheet" href="vendor/bootstrap/dist/css/bootstrap.min.css">
 </head>
 <body>
-	Test
+	<div class="table-responsive">
+		<table class="table">
+			<thead>
+				<tr>
+					<td></td>
+					<td></td>
+					<td>Price</td>
+					<td>How old</td>
+					<td>Link</td>
+					<td>Date</td>
+				</tr>
+			</thead>
+			{{#each this}}
+			<tr>
+				<td>
+					<label class="radio-inline has-success">
+					  <input type="radio" name="isOk_{{id}}" value="yes"> yes
+					</label>
+					
+				</td>
+				<td>
+					<label class="radio-inline">
+					  <input type="radio" name="isOk_{{id}}" value="no"> no
+					</label>
+				</td>
+				<td><b>{{price}}</b></td>
+				<td>{{formatRelative date units="minute"}}</td>
+				<td><a href="{{link}}">{{link}}</a></td>
+				<td>{{formatDate date day="numeric" month="numeric" year="2-digit" hour="2-digit" minute="2-digit"}}</td>
+			</tr>
+			{{/each}}
+		</table>
+	</div>
 </body>
 </html>
