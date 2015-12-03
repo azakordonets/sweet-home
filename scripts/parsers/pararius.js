@@ -33,12 +33,11 @@ ParariusParser.prototype.getFlatObject = function(node) {
 		return el.name == 'b' && p && p.name == 'strong' && p.attribs['class'] == 'price';
 	}, [node]);
 
-	var linkNode = utils.findOne(function(el) {
+	var link = _.result(utils.findOne(function(el) {
 		var p = el.parent;
 		return el.name == 'a' && p.name == 'div' && p.attribs['class'] == 'addressTitle';
-	}, [node]);
+	}, [node]), 'attribs.href');
 
-	var link = linkNode.attribs.href;
 	var id = _.find(link.split("/"), function(str) {
 		return str.indexOf("PR0") != -1;
 	});
@@ -46,7 +45,7 @@ ParariusParser.prototype.getFlatObject = function(node) {
 	return {
 		id: id,
 		price: parseInt(utils.getText(priceNode).replace(/[^0-9]/gi, '')),
-		link: this.conf.url + link
+		link: URL + link
 	}
 };
 

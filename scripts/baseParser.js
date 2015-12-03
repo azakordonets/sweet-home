@@ -6,16 +6,13 @@ var Promise = require('bluebird');
 var logger = require('./logger')
 var _ = require('lodash');
 
-var log;
-
 var ParserClass = function(config) {
 	this.conf = config;
-
-	log = logger.getLogger(config.key);
+	this.log = logger.getLogger(config.key);
 };
 
 ParserClass.prototype.doMagic = function() {
-	log.info('Executing \'' + this.conf.name + '\' parser');
+	this.log.info('Executing \'' + this.conf.name + '\' parser');
 
 	var options = {
 		page: 0,
@@ -29,7 +26,7 @@ ParserClass.prototype.doMagic = function() {
 ParserClass.prototype.processPage = function(options) {
 	var _this = this;
 
-	log.debug('Process page ' + options.page);
+	this.log.debug('Process page ' + options.page);
 
 	return this.doRequest(options.page)
 		.then(this.getDOM.bind(this))
@@ -54,15 +51,15 @@ ParserClass.prototype.processPage = function(options) {
 					return pageFlats.concat(flats);
 				});
 			} else {
-				log.debug('Parser \'' + _this.conf.name + '\' finished.');
-				log.debug('Flats processed: ' + options.processed + '. Pages processed: ' + options.page + '.');
+				_this.log.debug('Parser \'' + _this.conf.name + '\' finished.');
+				_this.log.debug('Flats processed: ' + options.processed + '. Pages processed: ' + options.page + '.');
 				
 				return Promise.resolve(flats);
 			}
 		})
 		.catch(function(err) {
-			log.error('Parser \'' + _this.conf.name + '\' failed.');
-			log.error(err);
+			_this.log.error('Parser \'' + _this.conf.name + '\' failed.');
+			_this.log.error(err);
 		});
 };
 
@@ -72,7 +69,9 @@ ParserClass.prototype.processFlat = function(flat) {
 };
 
 ParserClass.prototype.includeFlat = function(flat) {
-	return (!this.conf.priceMin || flat.price >= this.conf.priceMin) && (!this.conf.priceMax || flat.price <= this.conf.priceMax);
+	return flat && flat.price && flat.id && flat.link &&
+		(!this.conf.priceMin || flat.price >= this.conf.priceMin) && 
+		(!this.conf.priceMax || flat.price <= this.conf.priceMax);
 };
 
 ParserClass.prototype.doRequest = function(pageNumber) {
@@ -81,13 +80,14 @@ ParserClass.prototype.doRequest = function(pageNumber) {
 
 ParserClass.prototype.getDOM = function(html) {
 	var handler;
+	var _this = this;
 
-	log.debug('Build loaded page DOM.');
+	this.log.debug('Build loaded page DOM.');
 
 	var promise = new Promise(function(resolve, reject) {
 		handler = new htmlparser.DomHandler(function (error, dom) {
 		    if (error) {
-		    	log.error('Failed DOM initialization.');
+		    	_this.log.error('Failed DOM initialization.');
 		    	reject(error);
 		    } else {
 		    	resolve(dom);

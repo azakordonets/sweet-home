@@ -6,8 +6,12 @@
 	"priceMax": 1500,
 	"parsers": [
 		{
-			"name": "Pararius.nl",
+			"name": "Pararius.com",
 			"key": "pararius"
+		},
+		{
+			"name": "Funda.nl",
+			"key": "funda"
 		}
 	]
 }
