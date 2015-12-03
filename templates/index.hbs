@@ -12,7 +12,7 @@
 		<table class="table">
 			<thead>
 				<tr>
-					<td></td>
+					<td>#</td>
 					<td></td>
 					<td>Price</td>
 					<td>How old</td>
@@ -22,20 +22,18 @@
 			</thead>
 			{{#each this}}
 			<tr>
+				<td>{{@index}}</td>
 				<td>
 					<label class="radio-inline has-success">
 					  <input type="radio" name="isOk_{{id}}" value="yes"> yes
 					</label>
-					
-				</td>
-				<td>
 					<label class="radio-inline">
 					  <input type="radio" name="isOk_{{id}}" value="no"> no
 					</label>
 				</td>
 				<td><b>{{price}}</b></td>
 				<td>{{formatRelative date units="minute"}}</td>
-				<td><a href="{{link}}">{{link}}</a></td>
+				<td><a href="{{link}}" target="_blank">{{link}}</a></td>
 				<td>{{formatDate date day="numeric" month="numeric" year="2-digit" hour="2-digit" minute="2-digit"}}</td>
 			</tr>
 			{{/each}}

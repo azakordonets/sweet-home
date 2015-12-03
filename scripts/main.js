@@ -3,6 +3,7 @@
 var log = require('./logger').getLogger('main');
 var HandlebarsIntl = require('handlebars-intl');
 var Handlebars = require('handlebars');
+var notify = require('node-notify');
 var Promise = require('bluebird');
 var express = require('express');
 var fse = require('fs-extra');
@@ -154,6 +155,14 @@ function storeFlats(flats, ids) {
 	if(isFlatsChanged || isIdsChanged) {
 		if(isFlatsChanged) {
 			log.info('Saving ' + flats.length + ' found flats.');
+
+			// Notify
+			notify({
+				title: 'Home, sweet home',
+				subtitle: 'New flats found!',
+				message: flats.length + ' new flats',
+				open: 'http://localhost:' + SERVER_PORT
+			})
 		}
 
 		if(isIdsChanged) {
@@ -238,7 +247,13 @@ function loop() {
 				_.assign(ids, obj.ids);
 				flats = flats.concat(obj.flats);
 			});
-			return storeFlats(flats, ids);
+
+			// Remove duplicates, which are already in state
+			var filtered = _.filter(flats, function(flat) {
+				return !_.find(state.flats, { id: flat.id });
+			});
+
+			return storeFlats(filtered, ids);
 		})
 		.then(generateHtml)
 		.catch(log.error.bind(log))
