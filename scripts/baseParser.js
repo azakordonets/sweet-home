@@ -3,15 +3,19 @@
 var rp = require('request-promise');
 var htmlparser = require('htmlparser2');
 var Promise = require('bluebird');
-var colors = require('colors');
+var logger = require('./logger')
 var _ = require('lodash');
+
+var log;
 
 var ParserClass = function(config) {
 	this.conf = config;
+
+	log = logger.getLogger(config.key);
 };
 
 ParserClass.prototype.doMagic = function() {
-	console.info(('Executing \'' + this.conf.name + '\' parser...').blue);
+	log.info('Executing \'' + this.conf.name + '\' parser');
 
 	var options = {
 		page: 0,
@@ -25,6 +29,8 @@ ParserClass.prototype.doMagic = function() {
 ParserClass.prototype.processPage = function(options) {
 	var _this = this;
 
+	log.debug('Process page ' + options.page);
+
 	return this.doRequest(options.page)
 		.then(this.getDOM.bind(this))
 		.then(this.getFlatNodes.bind(this))
@@ -33,9 +39,8 @@ ParserClass.prototype.processPage = function(options) {
 			var flats = [];
 			_.forEach(nodes, function(node) {
 				var obj = _this.getFlatObject(node);
-				obj = _this.filterFlat(obj);
 
-				if(obj) {
+				if(_this.includeFlat(obj)) {
 					flats.push(obj);
 				}
 
@@ -49,25 +54,25 @@ ParserClass.prototype.processPage = function(options) {
 					return pageFlats.concat(flats);
 				});
 			} else {
-				console.log(('Parser \'' + _this.conf.name + '\' finished.\nFlats processed: ' + options.processed + '. Pages processed: ' + options.page + '.').green);
+				log.debug('Parser \'' + _this.conf.name + '\' finished.');
+				log.debug('Flats processed: ' + options.processed + '. Pages processed: ' + options.page + '.');
+				
 				return Promise.resolve(flats);
 			}
 		})
 		.catch(function(err) {
-			console.log(('ERROR: Parser \'' + _this.conf.name + '\' failed.\n' + err).red);
+			log.error('Parser \'' + _this.conf.name + '\' failed.');
+			log.error(err);
 		});
 };
 
 ParserClass.prototype.processFlat = function(flat) {
-
-
-
-
+	// TODO
 	return false;
 };
 
-ParserClass.prototype.filterFlat = function(flat) {
-	return flat;
+ParserClass.prototype.includeFlat = function(flat) {
+	return (!this.conf.priceMin || flat.price >= this.conf.priceMin) && (!this.conf.priceMax || flat.price <= this.conf.priceMax);
 };
 
 ParserClass.prototype.doRequest = function(pageNumber) {
@@ -77,9 +82,12 @@ ParserClass.prototype.doRequest = function(pageNumber) {
 ParserClass.prototype.getDOM = function(html) {
 	var handler;
 
+	log.debug('Build loaded page DOM.');
+
 	var promise = new Promise(function(resolve, reject) {
 		handler = new htmlparser.DomHandler(function (error, dom) {
 		    if (error) {
+		    	log.error('Failed DOM initialization.');
 		    	reject(error);
 		    } else {
 		    	resolve(dom);

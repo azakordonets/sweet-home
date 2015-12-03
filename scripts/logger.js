@@ -1,5 +1,9 @@
-var bunyan = require('bunyan');
+var log4js = require('log4js');
 
-module.exports = bunyan.createLogger({
-	name: 'sweet-home'
+log4js.configure({
+	appenders: [
+		{ type: 'console' }
+	]
 });
+
+module.exports = log4js;

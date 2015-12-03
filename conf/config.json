@@ -1,7 +1,9 @@
 {
-	"interval": 1,
-	"recordsLimit": 5,
+	"interval": 10,
+	"recordsLimit": 200,
 	"pagesLimit": 10,
+	"priceMin": 800,
+	"priceMax": 1500,
 	"parsers": [
 		{
 			"name": "Pararius.nl",
