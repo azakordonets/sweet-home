@@ -11,6 +11,9 @@ var ParserClass = function(config) {
 	this.log = logger.getLogger(config.key);
 };
 
+/*
+ * Main entry point
+ */
 ParserClass.prototype.doMagic = function() {
 	this.log.info('Executing \'' + this.conf.name + '\' parser');
 
@@ -23,6 +26,9 @@ ParserClass.prototype.doMagic = function() {
 	return this.processPage(options);
 };
 
+/*
+ * Downloads one website page, parses it and process items on it
+ */
 ParserClass.prototype.processPage = function(options) {
 	var _this = this;
 
@@ -63,21 +69,33 @@ ParserClass.prototype.processPage = function(options) {
 		});
 };
 
+/*
+ *
+ */
 ParserClass.prototype.processFlat = function(flat) {
 	// TODO
 	return false;
 };
 
+/*
+ * Do check, is the current flat fulfill requirements
+ */
 ParserClass.prototype.includeFlat = function(flat) {
 	return flat && flat.price && flat.id && flat.link &&
 		(!this.conf.priceMin || flat.price >= this.conf.priceMin) && 
 		(!this.conf.priceMax || flat.price <= this.conf.priceMax);
 };
 
+/*
+ * Do actual HTTP request for a page
+ */
 ParserClass.prototype.doRequest = function(pageNumber) {
 	return rp({ url: this.getPageUrl(pageNumber) });
 };
 
+/*
+ * Parse page's html and return DOM structure
+ */
 ParserClass.prototype.getDOM = function(html) {
 	var handler;
 	var _this = this;
@@ -102,15 +120,27 @@ ParserClass.prototype.getDOM = function(html) {
 	return promise;
 };
 
+/*
+ * Returns page url with a page number
+ * Should be implemented in child class
+ */
 ParserClass.prototype.getPageUrl = function(pageNumber) {
 	throw new Error('Method \'getPageUrl\' not implemented in \'' + this.conf.name + '\' parser.');
 };
 
-ParserClass.prototype.getFlatNodes = function(pageNumber) {
+/*
+ * Returns collection on DOM nodes with flats out of the page DOM
+ * Should be implemented in child class
+ */
+ParserClass.prototype.getFlatNodes = function(dom) {
 	throw new Error('Method \'getFlatNodes\' not implemented in \'' + this.conf.name + '\' parser.');
 };
 
-ParserClass.prototype.getFlatObject = function(pageNumber) {
+/*
+ * Returns flat JSON out of the DOM node
+ * Should be implemented in child class
+ */
+ParserClass.prototype.getFlatObject = function(node) {
 	throw new Error('Method \'getFlatObject\' not implemented in \'' + this.conf.name + '\' parser.');
 };
 

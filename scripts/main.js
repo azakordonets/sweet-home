@@ -68,6 +68,9 @@ function initParameters (config) {
 	}
 }
 
+/*
+ * Return environment home path
+ */
 function getHomePath() {
 	return process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
 }
@@ -110,6 +113,9 @@ function getStatePath() {
 	return process.env[STATE_ENV] || STATE_PATH;
 }
 
+/*
+ * Saves found flats to state file
+ */
 function storeFlats(flats) {
 	if(_.isArray(flats) && flats.length > 0) {
 		log.info('Saving ' + flats.length + ' found flats.');
