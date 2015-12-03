@@ -118,7 +118,18 @@ function getStatePath() {
  * Saves found flats to state file
  */
 function storeFlats(flats, ids) {
-	if(_.isArray(flats) && flats.length > 0) {
+	var newIdMap = _.map(ids, function(id, key) {
+		return key + '_' + id;
+	});
+
+	var idMap = _.map(state.flatId, function(id, key) {
+		return key + '_' + id;
+	});
+
+	var isFlatsChanged = _.isArray(flats) && flats.length > 0;
+	var isIdsChanged = _.difference(newIdMap, idMap).length > 0;
+
+	if(isFlatsChanged || isIdsChanged) {
 		log.info('Saving ' + flats.length + ' found flats.');
 
 		state.flats = state.flats.concat(flats);
@@ -138,6 +149,10 @@ function storeFlats(flats, ids) {
 	} else {
 		log.info('No flats to store.')
 	};
+}
+
+function generateHtml() {
+	// ToDO: take state obj and generate html with handlebars
 }
 
 /*
@@ -160,6 +175,7 @@ function loop() {
 			});
 			return storeFlats(flats, ids);
 		})
+		.then(generateHtml)
 		.catch(log.error.bind(log))
 		.finally(function() {
 			log.info('Sleep for ' + interval + ' minutes.');
