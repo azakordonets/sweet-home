@@ -2,10 +2,10 @@
 
 var log = require('./logger').getLogger('main');
 var HandlebarsIntl = require('handlebars-intl');
+var bs = require('browser-sync').create();
 var Handlebars = require('handlebars');
 var notify = require('node-notify');
 var Promise = require('bluebird');
-var express = require('express');
 var fse = require('fs-extra');
 var _ = require('lodash');
 var fs = require('fs');
@@ -42,14 +42,18 @@ function start() {
 }
 
 /*
- * Start local Express server
+ * Start local Browser Sync server
  */
 function runServer () {
 	log.info('Starting local webserver on port ' + SERVER_PORT);
 
-	var app = express();
-	app.use(express.static(DIST_PATH));
-	app.listen(SERVER_PORT)
+	bs.init({
+		server: DIST_PATH,
+		port: SERVER_PORT,
+		files: INDEX_PATH,
+		open: 'local',
+		notify: false
+	});
 }
 
 /*
@@ -156,13 +160,12 @@ function storeFlats(flats, ids) {
 		if(isFlatsChanged) {
 			log.info('Saving ' + flats.length + ' found flats.');
 
-			// Notify
 			notify({
 				title: 'Home, sweet home',
 				subtitle: 'New flats found!',
 				message: flats.length + ' new flats',
 				open: 'http://localhost:' + SERVER_PORT
-			})
+			});
 		}
 
 		if(isIdsChanged) {

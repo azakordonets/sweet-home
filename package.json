@@ -15,7 +15,7 @@
   "license": "MIT",
   "dependencies": {
     "bluebird": "^3.0.5",
-    "express": "^4.13.3",
+    "browser-sync": "^2.10.0",
     "fs-extra": "^0.26.2",
     "handlebars": "^4.0.5",
     "handlebars-intl": "^1.1.1",
