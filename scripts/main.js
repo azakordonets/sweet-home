@@ -1,17 +1,24 @@
 'use strict';
 
-var Promise = require('bluebird');
 var log = require('./logger').getLogger('main');
+var Handlebars = require('handlebars');
+var Promise = require('bluebird');
+var express = require('express');
 var fse = require('fs-extra');
 var _ = require('lodash');
-var handlebars = require('handlebars');
+var fs = require('fs');
 
 var CONF_PATH = './conf/config.json';
 var STATE_PATH = getHomePath() + '/sweet-home/state.json';
+var DIST_PATH = './dist';
+var TEMPLATE_PATH = 'templates/index.hbs';
+var INDEX_PATH = DIST_PATH + '/index.html';
 
 var STATE_ENV = 'SWEET_HOME_STATE_FILE';
+var ENCODING = 'utf-8';
+var SERVER_PORT = 3000;
 
-var interval, parsers = [];
+var interval, parsers = [], template;
 var state = {
 	"flats": [],
 	"flatId": {}
@@ -24,10 +31,23 @@ function start() {
 	loadState()
 		.then(getConfig)
 		.then(initParameters)
+		.then(generateHtml)
+		.then(runServer)
 		.then(tryRun)
 		.catch(function(err) {
 			log.error(err);
 		});
+}
+
+/*
+ * Start local Express server
+ */
+function runServer () {
+	log.info('Starting local webserver on port ' + SERVER_PORT);
+
+	var app = express();
+	app.use(express.static(DIST_PATH));
+	app.listen(SERVER_PORT)
 }
 
 /*
@@ -158,8 +178,35 @@ function storeFlats(flats, ids) {
 	};
 }
 
+/*
+ * Generate web site page with found results
+ */
 function generateHtml() {
-	// ToDO: take state obj and generate html with handlebars
+	log.debug('Generating results html page');
+
+	getTemplate()
+		.then(function(tmpl) {
+			return tmpl(state);
+		})
+		.then(function(page){
+			var writeFile = Promise.promisify(fs.writeFile);
+			return writeFile(INDEX_PATH, page, ENCODING);
+		});
+}
+
+/*
+ * Loads and compiles Handlebars template
+ */
+function getTemplate () {
+	if(!template) {
+		return Promise.promisify(fs.readFile)(TEMPLATE_PATH, { encoding: ENCODING })
+			.then(function(templateSource) {
+				template = Handlebars.compile(templateSource);
+				return template;
+			});
+	} else {
+		return Promise.resolve(template);
+	}
 }
 
 /*
