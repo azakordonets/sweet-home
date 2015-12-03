@@ -1,0 +1,14 @@
+{
+  "name": "sweet-home",
+  "homepage": "https://github.com/bponomarenko/sweet-home",
+  "authors": [
+    "Borys Ponomarenko <borysp@backbase.com>"
+  ],
+  "description": "Page to display found flats",
+  "main": "index.html",
+  "moduleType": [],
+  "license": "MIT",
+  "dependencies": {
+    "bootstrap": "~3.3.6"
+  }
+}

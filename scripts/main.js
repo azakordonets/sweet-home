@@ -4,6 +4,7 @@ var Promise = require('bluebird');
 var log = require('./logger').getLogger('main');
 var fse = require('fs-extra');
 var _ = require('lodash');
+var handlebars = require('handlebars');
 
 var CONF_PATH = './conf/config.json';
 var STATE_PATH = getHomePath() + '/sweet-home/state.json';
