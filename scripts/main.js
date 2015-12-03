@@ -130,7 +130,13 @@ function storeFlats(flats, ids) {
 	var isIdsChanged = _.difference(newIdMap, idMap).length > 0;
 
 	if(isFlatsChanged || isIdsChanged) {
-		log.info('Saving ' + flats.length + ' found flats.');
+		if(isFlatsChanged) {
+			log.info('Saving ' + flats.length + ' found flats.');
+		}
+
+		if(isIdsChanged) {
+			log.info('Updating checked ids.');
+		}
 
 		state.flats = state.flats.concat(flats);
 		_.assign(state.flatId, ids);
