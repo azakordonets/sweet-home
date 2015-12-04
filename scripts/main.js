@@ -18,7 +18,7 @@ var INDEX_PATH = DIST_PATH + '/index.html';
 
 var STATE_ENV = 'SWEET_HOME_STATE_FILE';
 var ENCODING = 'utf-8';
-var SERVER_PORT = 3000;
+var SERVER_PORT = 3002;
 
 var interval, parsers = [], template;
 var state = {
