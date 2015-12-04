@@ -8,6 +8,7 @@ log4js.configure({
 	],
 	levels: {
 		'[all]': 'INFO'
+		// '[all]': 'DEBUG'
 	}
 });
 

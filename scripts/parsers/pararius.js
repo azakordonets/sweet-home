@@ -20,7 +20,7 @@ ParariusParser.prototype.getPageUrl = function(pageNumber) {
 ParariusParser.prototype.getFlatNodes = function(dom) {
 	return htmlparser.DomUtils.findAll(function(el) {
 		var p = el.parent || {};
-		var cn = el.attribs && el.attribs['class'];
+		var cn = el.attribs['class'];
 		return p.attribs && p.attribs.id == 'resultset' && el.name == 'li' && _.isString(cn) && cn.indexOf('row-') != -1;
 	}, dom);
 };

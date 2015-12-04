@@ -1,7 +1,7 @@
 {
 	"interval": 5,
 	"recordsLimit": 200,
-	"pagesLimit": 10,
+	"pagesLimit": 1,
 	"priceMin": 800,
 	"priceMax": 1500,
 	"parsers": [

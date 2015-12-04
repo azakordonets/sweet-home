@@ -8,7 +8,6 @@
     "url": "https://github.com/bponomarenko/sweet-home.git"
   },
   "scripts": {
-    "prepublish": "bower install --config.cwd=dist --config.directory=vendor",
     "start": "node index.js"
   },
   "author": "Borys Ponomarenko",

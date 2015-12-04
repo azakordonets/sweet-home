@@ -51,7 +51,7 @@ function runServer () {
 		server: DIST_PATH,
 		port: SERVER_PORT,
 		files: INDEX_PATH,
-		open: 'local',
+		open: false,
 		notify: false
 	});
 }

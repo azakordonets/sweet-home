@@ -103,7 +103,14 @@ ParserClass.prototype.includeFlat = function(flat) {
  * Do actual HTTP request for a page
  */
 ParserClass.prototype.doRequest = function(pageNumber) {
-	return rp({ url: this.getPageUrl(pageNumber) });
+	var log = this.log;
+	log.debug('Loading page ' + pageNumber);
+
+	return rp({ url: this.getPageUrl(pageNumber) })
+		.then(function(html) {
+			log.debug('Page ' + pageNumber + ' loaded.');
+			return html;
+		});
 };
 
 /*
