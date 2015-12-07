@@ -6,6 +6,8 @@ var Promise = require('bluebird');
 var logger = require('./logger')
 var _ = require('lodash');
 
+var AMSTERDAM = 'amsterdam';
+
 var ParserClass = function(config) {
 	this.conf = config;
 	this.log = logger.getLogger(config.key);
@@ -52,6 +54,9 @@ ParserClass.prototype.processPage = function(options) {
 					result.flats.push(obj);
 				}
 
+				// Remove 'city' property from result
+				delete obj.city;
+
 				if(options.page == 0 && index == 0) {
 					lastId = result.ids[_this.conf.key] = obj.id;
 				}
@@ -63,8 +68,10 @@ ParserClass.prototype.processPage = function(options) {
 
 			if(!options.foundLast && ++options.page < _this.conf.pagesLimit && options.processed < _this.conf.recordsLimit) {
 				return _this.processPage(options).then(function(innerResult) {
-					result.flats = result.flats.concat(innerResult.flats);
-					_.assign(result.ids, innerResult.ids);
+					if(innerResult && innerResult.ids && innerResult.flats) {
+						result.flats = result.flats.concat(innerResult.flats);
+						_.assign(result.ids, innerResult.ids);
+					}
 
 					return result;
 				});
@@ -78,8 +85,10 @@ ParserClass.prototype.processPage = function(options) {
 			}
 		})
 		.catch(function(err) {
-			_this.log.error('Parser \'' + _this.conf.name + '\' failed.');
+			_this.log.error('Parser \'' + _this.conf.name + '\' failed. Page ' + options.page);
 			_this.log.error(err);
+
+			return {};
 		});
 };
 
@@ -96,7 +105,8 @@ ParserClass.prototype.processFlat = function(flat) {
 ParserClass.prototype.includeFlat = function(flat) {
 	return flat && flat.price && flat.id && flat.link &&
 		(!this.conf.priceMin || flat.price >= this.conf.priceMin) && 
-		(!this.conf.priceMax || flat.price <= this.conf.priceMax);
+		(!this.conf.priceMax || flat.price <= this.conf.priceMax) &&
+		flat.city == AMSTERDAM;
 };
 
 /*
@@ -161,7 +171,10 @@ ParserClass.prototype.getFlatNodes = function(dom) {
  * Should be implemented in child class
  */
 ParserClass.prototype.getFlatObject = function(node) {
-	return { date: Date.now() };
+	return {
+		date: Date.now(),
+		city: AMSTERDAM
+	};
 };
 
 module.exports = ParserClass;

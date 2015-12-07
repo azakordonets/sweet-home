@@ -1,7 +1,7 @@
 {
 	"interval": 5,
 	"recordsLimit": 200,
-	"pagesLimit": 1,
+	"pagesLimit": 10,
 	"priceMin": 800,
 	"priceMax": 1500,
 	"parsers": [
@@ -12,6 +12,10 @@
 		{
 			"name": "Funda.nl",
 			"key": "funda"
+		},
+		{
+			"name": "Trovit.nl",
+			"key": "trovit"
 		}
 	]
 }
