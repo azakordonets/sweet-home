@@ -3,7 +3,7 @@
 	"recordsLimit": 200,
 	"pagesLimit": 10,
 	"priceMin": 800,
-	"priceMax": 1500,
+	"priceMax": 1450,
 	"parsers": [
 		{
 			"name": "Pararius.com",
