@@ -19,7 +19,7 @@
 			<thead>
 				<tr>
 					<td>#</td>
-					<td></td>
+					<!-- <td></td> -->
 					<td>Price</td>
 					<td>How old</td>
 					<td>Link</td>
@@ -29,14 +29,14 @@
 			{{#each this}}
 			<tr>
 				<td>{{@index}}</td>
-				<td>
+				<!-- <td>
 					<label class="radio-inline has-success">
 					  <input type="radio" name="isOk_{{id}}" value="yes"> yes
 					</label>
 					<label class="radio-inline">
 					  <input type="radio" name="isOk_{{id}}" value="no"> no
 					</label>
-				</td>
+				</td> -->
 				<td><b>{{price}} €</b></td>
 				<td>{{formatRelative date units="hour"}}</td>
 				<td><a href="{{link}}" target="_blank">{{link}}</a></td>
