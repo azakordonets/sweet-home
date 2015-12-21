@@ -162,6 +162,7 @@ function storeFlats(flats, ids) {
 
 			notify({
 				title: 'Home, sweet home',
+				group: 'sweet-home',
 				subtitle: 'New flats found!',
 				message: flats.length + ' new flats',
 				open: 'http://localhost:' + SERVER_PORT
